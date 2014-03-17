@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2014 TESIS DYNAware GmbH.
+ * All rights reserved. Use is subject to license terms.
+ * 
+ * This file is licensed under the Eclipse Public License v1.0, which accompanies this
+ * distribution and is available at http://www.eclipse.org/legal/epl-v10.html.
+ */
 package de.tesis.dynaware.javafx.fancychart.data.importer;
 
 import java.io.FileWriter;
