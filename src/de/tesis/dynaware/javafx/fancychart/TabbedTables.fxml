@@ -9,35 +9,60 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:id="tabPaneContainer" fx:controller="de.tesis.dynaware.javafx.fancychart.TabbedTablesController" styleClass="table-container">
+<StackPane xmlns:fx="http://javafx.com/fxml" fx:id="tabPaneContainer" fx:controller="de.tesis.dynaware.javafx.fancychart.TabbedTablesController">
 
 	<children>
-		<TabPane fx:id="tableTabPane" VBox.vgrow="ALWAYS"> 
+		<TabPane fx:id="tableTabPane"> 
 			<tabs>
 				<Tab fx:id="tab0" text="Data Set 1" closable="false"> 
 					<content>
-						<TableView fx:id="tableView0"/> 
+						<VBox styleClass="table-container"> 
+							<children>
+								<TableView fx:id="tableView0" VBox.vgrow="ALWAYS"/> 
+								<HBox fx:id="buttonContainer0" styleClass="button-container" alignment="CENTER"> 
+									<children>
+										<Button fx:id="importButton0" text="Import" styleClass="table-button" onAction="#import0"/> 
+										<Button fx:id="exportButton0" text="Export" styleClass="table-button" onAction="#export0"/> 
+									</children>
+								</HBox>
+							</children>
+						</VBox>
 					</content>
 				</Tab>
 				<Tab fx:id="tab1" text="Data Set 2" closable="false"> 
 					<content>
-						<TableView fx:id="tableView1"/> 
+						<VBox styleClass="table-container"> 
+							<children>
+								<TableView fx:id="tableView1" VBox.vgrow="ALWAYS"/> 
+								<HBox fx:id="buttonContainer1" styleClass="button-container" alignment="CENTER"> 
+									<children>
+										<Button fx:id="importButton1" text="Import" styleClass="table-button" onAction="#import1"/> 
+										<Button fx:id="exportButton1" text="Export" styleClass="table-button" onAction="#export1"/> 
+									</children>
+								</HBox>
+							</children>
+						</VBox>
 					</content>
 				</Tab>
 				<Tab fx:id="tab2" text="Data Set 3" closable="false"> 
 					<content>
-						<TableView fx:id="tableView2"/> 
+						<VBox styleClass="table-container"> 
+							<children>
+								<TableView fx:id="tableView2" VBox.vgrow="ALWAYS"/> 
+								<HBox fx:id="buttonContainer2" styleClass="button-container" alignment="CENTER"> 
+									<children>
+										<Button fx:id="importButton2" text="Import" styleClass="table-button" onAction="#import2"/> 
+										<Button fx:id="exportButton2" text="Export" styleClass="table-button" onAction="#export2"/> 
+									</children>
+								</HBox>
+							</children>
+						</VBox>
 					</content>
 				</Tab>
 			</tabs>
 		</TabPane>
-		<HBox fx:id="buttonContainer" styleClass="button-container" alignment="CENTER"> 
-			<children>
-				<Button fx:id="importButton" text="Import" styleClass="table-button"/> 
-				<Button fx:id="exportButton" text="Export" styleClass="table-button"/> 
-			</children>
-		</HBox>
 	</children>
-</VBox>
+</StackPane>

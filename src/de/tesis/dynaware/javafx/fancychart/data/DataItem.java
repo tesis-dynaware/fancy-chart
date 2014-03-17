@@ -39,7 +39,7 @@ public class DataItem {
 		return yProperty.get();
 	}
 
-	public void setX(final int x) {
+	public void setX(final double x) {
 		xProperty.set(x);
 	}
 

@@ -23,7 +23,7 @@ import de.tesis.dynaware.javafx.fancychart.TabbedTables
 import de.tesis.dynaware.javafx.fancychart.DataItem
 
 component Characteristic controlledby FancyChartController {
-	StackPane id characteristicPane {
+	StackPane id rootPane {
 		children : [
 			HBox id chartPage {
 				children : [

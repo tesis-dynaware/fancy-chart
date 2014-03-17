@@ -74,11 +74,11 @@ public class FancyChartController {
 	private final List<ObservableList<DataItem>> ALL_DATA_SETS = new ArrayList<>();
 
 	@FXML
-	private StackPane characteristicPane;
+	private StackPane rootPane;
 	@FXML
 	private HBox chartPage;
 	@FXML
-	private VBox tabPaneContainer;
+	private StackPane tabPaneContainer;
 	@FXML
 	private VBox chartBox;
 	@FXML
@@ -106,6 +106,7 @@ public class FancyChartController {
 		populateChart();
 		setDataPointPopup();
 		initTabPane();
+
 	}
 
 	private void initTables() {
@@ -231,14 +232,13 @@ public class FancyChartController {
 	}
 
 	private void addSelectionListener() {
-		characteristicPane.addEventHandler(DataItemSelectionEvent.TYPE, new EventHandler<DataItemSelectionEvent>() {
+		rootPane.addEventHandler(DataItemSelectionEvent.TYPE, new EventHandler<DataItemSelectionEvent>() {
 
 			@Override
 			public void handle(final DataItemSelectionEvent event) {
 				final int dataSeriesIndex = event.getDataSeriesIndex();
 				final List<Integer> selectedIndices = event.getSelectedIndices();
 				setScale(dataSeriesIndex, selectedIndices);
-
 			}
 		});
 	}

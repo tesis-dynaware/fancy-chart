@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml" fx:id="characteristicPane" fx:controller="de.tesis.dynaware.javafx.fancychart.FancyChartController">
+<StackPane xmlns:fx="http://javafx.com/fxml" fx:id="rootPane" fx:controller="de.tesis.dynaware.javafx.fancychart.FancyChartController">
 
 	<children>
 		<HBox fx:id="chartPage"> 

@@ -7,6 +7,7 @@
  */
 package de.tesis.dynaware.javafx.fancychart;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +31,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Callback;
 import de.tesis.dynaware.javafx.fancychart.data.DataItem;
+import de.tesis.dynaware.javafx.fancychart.data.importer.CSVImporter;
 import de.tesis.dynaware.javafx.fancychart.events.DataItemSelectionEvent;
 
 /**
@@ -44,7 +48,7 @@ public class TabbedTablesController {
 	private static final int TABLE_COL_MIN_WIDTH = 120;
 
 	@FXML
-	private VBox tabPaneContainer;
+	private StackPane tabPaneContainer;
 	@FXML
 	private TabPane tableTabPane;
 	@FXML
@@ -60,11 +64,23 @@ public class TabbedTablesController {
 	@FXML
 	private TableView<DataItem> tableView2;
 	@FXML
-	private HBox buttonContainer;
+	private HBox buttonContainer0;
 	@FXML
-	private Button importButton;
+	private Button importButton0;
 	@FXML
-	private Button exportButton;
+	private Button exportButton0;
+	@FXML
+	private HBox buttonContainer1;
+	@FXML
+	private Button importButton1;
+	@FXML
+	private Button exportButton1;
+	@FXML
+	private HBox buttonContainer2;
+	@FXML
+	private Button importButton2;
+	@FXML
+	private Button exportButton2;
 
 	private final List<Tab> tabs = new ArrayList<>();
 	private final List<TableView<DataItem>> tableViews = new ArrayList<>();
@@ -272,6 +288,54 @@ public class TabbedTablesController {
 
 		}
 
+	}
+
+	@FXML
+	public void export2() {
+	}
+
+	@FXML
+	public void import2() {
+	}
+
+	@FXML
+	public void export1() {
+	}
+
+	@FXML
+	public void import1() {
+	}
+
+	@FXML
+	public void export0() {
+	}
+
+	@FXML
+	public void import0() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setInitialDirectory(File.listRoots()[0]);
+		fileChooser.setTitle("Import a CSV file");
+		fileChooser.setSelectedExtensionFilter(new ExtensionFilter("CSV files", "*.csv"));
+		File file = fileChooser.showOpenDialog(tabPaneContainer.getScene().getWindow());
+		List<List<Double>> data = CSVImporter.importCSV(file.getAbsolutePath());
+
+		List<Double> xVals = new ArrayList<>();
+		List<Double> yVals = new ArrayList<>();
+
+		for (List<Double> entries : data) {
+			xVals.add(entries.get(0));
+			yVals.add(entries.get(1));
+		}
+
+		updateDataItems(dataItems.get(0), xVals, yVals);
+	}
+
+	private void updateDataItems(List<DataItem> dataItems, List<Double> xVals, List<Double> yVals) {
+		for (Double x : xVals) {
+			int index = xVals.indexOf(x);
+			dataItems.get(index).setX(x);
+			dataItems.get(index).setY(yVals.get(index));
+		}
 	}
 
 }
