@@ -10,7 +10,7 @@ package de.tesis.dynaware.javafx.fancychart.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.tesis.dynaware.javafx.fancychart.data.importer.CSVImporter;
+import de.tesis.dynaware.javafx.fancychart.data.formats.CsvDao;
 
 public class DataSet1 {
 
@@ -20,7 +20,7 @@ public class DataSet1 {
 
 	static {
 		String filePath = DataSet1.class.getResource(FILE_NAME).getFile();
-		List<List<Double>> data = CSVImporter.importCSV(filePath);
+		List<List<Double>> data = CsvDao.importCSV(filePath);
 		for (List<Double> entries : data) {
 			X_VALS.add(entries.get(0));
 			Y_VALS.add(entries.get(1));

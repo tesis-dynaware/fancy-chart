@@ -36,7 +36,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Callback;
 import de.tesis.dynaware.javafx.fancychart.data.DataItem;
-import de.tesis.dynaware.javafx.fancychart.data.importer.CSVImporter;
+import de.tesis.dynaware.javafx.fancychart.data.DataItemDao;
+import de.tesis.dynaware.javafx.fancychart.data.DataItemDao.FileFormat;
+import de.tesis.dynaware.javafx.fancychart.events.DataItemImportEvent;
 import de.tesis.dynaware.javafx.fancychart.events.DataItemSelectionEvent;
 
 /**
@@ -84,7 +86,7 @@ public class TabbedTablesController {
 
 	private final List<Tab> tabs = new ArrayList<>();
 	private final List<TableView<DataItem>> tableViews = new ArrayList<>();
-	private final List<ObservableList<DataItem>> dataItems = new ArrayList<>();
+	private final List<ObservableList<DataItem>> dataItemList = new ArrayList<>();
 
 	public void initialize() {
 
@@ -106,10 +108,10 @@ public class TabbedTablesController {
 
 	@SuppressWarnings("unchecked")
 	public void initTable(final int index, final ObservableList<DataItem> items) {
-		if (index <= dataItems.size()) {
-			dataItems.add(items);
+		if (index <= dataItemList.size()) {
+			dataItemList.add(items);
 		} else {
-			dataItems.get(index).setAll(items);
+			dataItemList.get(index).setAll(items);
 		}
 
 		final TableColumn<DataItem, Double> xCol = new TableColumn<>("X");
@@ -121,7 +123,7 @@ public class TabbedTablesController {
 
 		if (index < tableViews.size()) {
 			final TableView<DataItem> tableView = tableViews.get(index);
-			tableView.setItems(dataItems.get(index));
+			tableView.setItems(dataItemList.get(index));
 			tableView.getColumns().setAll(xCol, yCol);
 
 			tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -291,51 +293,59 @@ public class TabbedTablesController {
 	}
 
 	@FXML
-	public void export2() {
-	}
-
-	@FXML
-	public void import2() {
-	}
-
-	@FXML
-	public void export1() {
-	}
-
-	@FXML
-	public void import1() {
-	}
-
-	@FXML
 	public void export0() {
+		exportToFile(dataItemList.get(0));
 	}
 
 	@FXML
 	public void import0() {
-		FileChooser fileChooser = new FileChooser();
-		fileChooser.setInitialDirectory(File.listRoots()[0]);
-		fileChooser.setTitle("Import a CSV file");
-		fileChooser.setSelectedExtensionFilter(new ExtensionFilter("CSV files", "*.csv"));
-		File file = fileChooser.showOpenDialog(tabPaneContainer.getScene().getWindow());
-		List<List<Double>> data = CSVImporter.importCSV(file.getAbsolutePath());
-
-		List<Double> xVals = new ArrayList<>();
-		List<Double> yVals = new ArrayList<>();
-
-		for (List<Double> entries : data) {
-			xVals.add(entries.get(0));
-			yVals.add(entries.get(1));
-		}
-
-		updateDataItems(dataItems.get(0), xVals, yVals);
+		importFromFile(0);
 	}
 
-	private void updateDataItems(List<DataItem> dataItems, List<Double> xVals, List<Double> yVals) {
-		for (Double x : xVals) {
-			int index = xVals.indexOf(x);
-			dataItems.get(index).setX(x);
-			dataItems.get(index).setY(yVals.get(index));
+	@FXML
+	public void export1() {
+		exportToFile(dataItemList.get(1));
+	}
+
+	@FXML
+	public void import1() {
+		importFromFile(1);
+	}
+
+	@FXML
+	public void export2() {
+		exportToFile(dataItemList.get(2));
+	}
+
+	@FXML
+	public void import2() {
+		importFromFile(2);
+	}
+
+	private void importFromFile(int index) {
+		FileChooser fileChooser = createFileChooser("Import a CSV file");
+		File file = fileChooser.showOpenDialog(tabPaneContainer.getScene().getWindow());
+		if (file != null) {
+			List<DataItem> dataItems = DataItemDao.importFromFile(file.getAbsolutePath(), FileFormat.CSV);
+			tabPaneContainer.fireEvent(new DataItemImportEvent(dataItems, index));
 		}
+	}
+
+	private void exportToFile(List<DataItem> dataItems) {
+		FileChooser fileChooser = createFileChooser("Export a CSV file");
+		fileChooser.setInitialFileName("export.csv");
+		File file = fileChooser.showSaveDialog(tabPaneContainer.getScene().getWindow());
+		if (file != null) {
+			DataItemDao.exportToFile(dataItems, file.getAbsolutePath(), FileFormat.CSV);
+		}
+	}
+
+	private static FileChooser createFileChooser(String title) {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setInitialDirectory(File.listRoots()[0]);
+		fileChooser.setTitle(title);
+		fileChooser.setSelectedExtensionFilter(new ExtensionFilter("CSV files", "*.csv"));
+		return fileChooser;
 	}
 
 }

@@ -36,6 +36,7 @@ import de.tesis.dynaware.javafx.fancychart.data.DataItem;
 import de.tesis.dynaware.javafx.fancychart.data.DataSet1;
 import de.tesis.dynaware.javafx.fancychart.data.DataSet2;
 import de.tesis.dynaware.javafx.fancychart.data.DataSet3;
+import de.tesis.dynaware.javafx.fancychart.events.DataItemImportEvent;
 import de.tesis.dynaware.javafx.fancychart.events.DataItemSelectionEvent;
 
 /**
@@ -196,18 +197,33 @@ public class FancyChartController {
 	}
 
 	private void populateChart() {
-
 		for (int i = 0; i < ALL_DATA_SETS.size(); i++) {
 			ObservableList<DataItem> items = ALL_DATA_SETS.get(i);
-			for (int j = 0; j < items.size(); j++) {
-				final DataItem dataItem = items.get(j);
-				final Data<Number, Number> data = new XYChart.Data<Number, Number>();
-				data.XValueProperty().bind(dataItem.xProperty());
-				data.YValueProperty().bind(dataItem.yProperty());
-				chart.getData().get(i).getData().add(data);
-			}
+			setDataItems(items, i);
+		}
+	}
+
+	public void setDataItems(List<DataItem> items, int index) {
+		Series<Number, Number> series = chart.getData().get(index);
+
+		clearSeries(series);
+
+		for (int j = 0; j < items.size(); j++) {
+			final DataItem dataItem = items.get(j);
+			final Data<Number, Number> data = new XYChart.Data<Number, Number>();
+			data.XValueProperty().bind(dataItem.xProperty());
+			data.YValueProperty().bind(dataItem.yProperty());
+			series.getData().add(data);
 		}
 
+	}
+
+	private void clearSeries(Series<Number, Number> series) {
+		for (Data<Number, Number> data : series.getData()) {
+			data.XValueProperty().unbind();
+			data.YValueProperty().unbind();
+		}
+		series.getData().clear();
 	}
 
 	private void createChart() {
@@ -225,6 +241,18 @@ public class FancyChartController {
 
 		chartBox.getChildren().add(0, chart);
 		addSelectionListener();
+		addDataImportListener();
+	}
+
+	private void addDataImportListener() {
+		rootPane.addEventHandler(DataItemImportEvent.TYPE, new EventHandler<DataItemImportEvent>() {
+
+			@Override
+			public void handle(DataItemImportEvent event) {
+				setDataItems(event.getImportedDataItems(), event.getDataSeriesIndex());
+			}
+		});
+
 	}
 
 	private void initTabPane() {

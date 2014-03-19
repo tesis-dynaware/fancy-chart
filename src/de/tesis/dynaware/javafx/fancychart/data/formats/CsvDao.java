@@ -5,22 +5,48 @@
  * This file is licensed under the Eclipse Public License v1.0, which accompanies this
  * distribution and is available at http://www.eclipse.org/legal/epl-v10.html.
  */
-package de.tesis.dynaware.javafx.fancychart.data.importer;
+package de.tesis.dynaware.javafx.fancychart.data.formats;
 
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
-public class CSVExporter {
+public class CsvDao {
 
+	private static CSVReader reader;
 	private static CSVWriter writer;
+
+	public static List<List<Double>> importCSV(String filePath) {
+		try {
+			reader = new CSVReader(new FileReader(filePath));
+			List<String[]> entries = reader.readAll();
+			List<List<Double>> vals = new ArrayList<>(entries.size());
+
+			for (String[] entry : entries) {
+				List<Double> l = new ArrayList<>();
+				for (String string : entry) {
+					l.add(Double.parseDouble(string));
+				}
+				vals.add(l);
+
+			}
+			reader.close();
+			return vals;
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+		}
+		return Collections.emptyList();
+	}
 
 	public static void exportCSV(List<List<Double>> data, String filePath) {
 		try {
-			writer = new CSVWriter(new FileWriter(filePath));
+			writer = new CSVWriter(new FileWriter(filePath), ',', '\0');
 
 			List<String[]> entries = new ArrayList<>();
 			for (Double col : data.get(0)) {
