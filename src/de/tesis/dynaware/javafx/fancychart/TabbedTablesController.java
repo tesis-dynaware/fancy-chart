@@ -287,9 +287,7 @@ public class TabbedTablesController {
 					tableView.fireEvent(new DataItemSelectionEvent(tableViews.indexOf(tableView), list));
 				}
 			}
-
 		}
-
 	}
 
 	@FXML

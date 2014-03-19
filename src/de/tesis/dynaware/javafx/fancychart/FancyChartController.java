@@ -33,9 +33,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 import de.tesis.dynaware.javafx.fancychart.data.DataItem;
-import de.tesis.dynaware.javafx.fancychart.data.DataSet1;
-import de.tesis.dynaware.javafx.fancychart.data.DataSet2;
-import de.tesis.dynaware.javafx.fancychart.data.DataSet3;
+import de.tesis.dynaware.javafx.fancychart.data.DefaultDataSet1;
+import de.tesis.dynaware.javafx.fancychart.data.DefaultDataSet2;
+import de.tesis.dynaware.javafx.fancychart.data.DefaultDataSet3;
 import de.tesis.dynaware.javafx.fancychart.events.DataItemImportEvent;
 import de.tesis.dynaware.javafx.fancychart.events.DataItemSelectionEvent;
 
@@ -129,9 +129,9 @@ public class FancyChartController {
 
 	private void initItemList() {
 
-		ObservableList<DataItem> DATA_SET_1 = FXCollections.observableArrayList(DataSet1.getDataItems());
-		ObservableList<DataItem> DATA_SET_2 = FXCollections.observableArrayList(DataSet2.getDataItems());
-		ObservableList<DataItem> DATA_SET_3 = FXCollections.observableArrayList(DataSet3.getDataItems());
+		ObservableList<DataItem> DATA_SET_1 = FXCollections.observableArrayList(DefaultDataSet1.getDataItems());
+		ObservableList<DataItem> DATA_SET_2 = FXCollections.observableArrayList(DefaultDataSet2.getDataItems());
+		ObservableList<DataItem> DATA_SET_3 = FXCollections.observableArrayList(DefaultDataSet3.getDataItems());
 
 		ALL_DATA_SETS.add(DATA_SET_1);
 		ALL_DATA_SETS.add(DATA_SET_2);
