@@ -7,43 +7,43 @@
  */
 package de.tesis.dynaware.javafx.fancychart.data;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
 
 /**
  * 
  */
 public class DataItem {
 
-	private final DoubleProperty xProperty = new SimpleDoubleProperty(this, "x");
-	private final DoubleProperty yProperty = new SimpleDoubleProperty(this, "y");
+	private final Property<Number> xProperty = new SimpleObjectProperty<Number>(this, "x");
+	private final Property<Number> yProperty = new SimpleObjectProperty<Number>(this, "y");
 
-	public DataItem(final double x, final double y) {
-		xProperty.set(x);
-		yProperty.set(y);
+	public DataItem(final Number x, final Number y) {
+		xProperty.setValue(x);
+		yProperty.setValue(y);
 	}
 
-	public DoubleProperty xProperty() {
+	public Property<Number> xProperty() {
 		return xProperty;
 	}
 
-	public DoubleProperty yProperty() {
+	public Property<Number> yProperty() {
 		return yProperty;
 	}
 
-	public double getX() {
-		return xProperty.get();
+	public Number getX() {
+		return xProperty.getValue();
 	}
 
-	public double getY() {
-		return yProperty.get();
+	public Number getY() {
+		return yProperty.getValue();
 	}
 
-	public void setX(final double x) {
-		xProperty.set(x);
+	public void setX(final Number x) {
+		xProperty.setValue(x);
 	}
 
-	public void setY(final double v) {
-		yProperty.set(v);
+	public void setY(final Number v) {
+		yProperty.setValue(v);
 	}
 }

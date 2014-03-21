@@ -10,54 +10,57 @@ package de.tesis.dynaware.javafx.fancychart.data.formats;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
 public class CsvDao {
 
+	private static final Locale LOCALE = Locale.US;
 	private static CSVReader reader;
 	private static CSVWriter writer;
 
-	public static List<List<Double>> importCSV(String filePath) {
+	public static SortedMap<Number, Number> importCsv(String filePath) {
 		try {
 			reader = new CSVReader(new FileReader(filePath));
 			List<String[]> entries = reader.readAll();
-			List<List<Double>> vals = new ArrayList<>(entries.size());
+			SortedMap<Number, Number> data = new TreeMap<>();
 
-			for (String[] entry : entries) {
-				List<Double> l = new ArrayList<>();
-				for (String string : entry) {
-					l.add(Double.parseDouble(string));
+			for (String[] line : entries) {
+				if (line.length == 2) {
+					Number x = NumberFormat.getNumberInstance(LOCALE).parse(line[0]);
+					Number y = NumberFormat.getNumberInstance(LOCALE).parse(line[1]);
+					data.put(x, y);
 				}
-				vals.add(l);
-
 			}
+
 			reader.close();
-			return vals;
-		} catch (IOException e) {
+			return data;
+		} catch (IOException | ParseException e) {
 			System.err.println(e.getMessage());
 		}
-		return Collections.emptyList();
+		return Collections.emptySortedMap();
 	}
 
-	public static void exportCSV(List<List<Double>> data, String filePath) {
+	public static void exportCsv(SortedMap<Number, Number> data, String filePath) {
 		try {
 			writer = new CSVWriter(new FileWriter(filePath), ',', '\0');
 
-			List<String[]> entries = new ArrayList<>();
-			for (Double col : data.get(0)) {
-				int index = data.get(0).indexOf(col);
-				String[] strings = new String[data.size()];
-				for (int i = 0; i < data.size(); i++) {
-					strings[i] = Double.toString(data.get(i).get(index));
-				}
-				entries.add(strings);
-
+			List<String[]> entries = new ArrayList<>(data.size());
+			for (Number x : data.keySet()) {
+				String xString = String.valueOf(x);
+				String yString = String.valueOf(data.get(x));
+				entries.add(new String[] { xString, yString });
 			}
+
 			writer.writeAll(entries);
 			writer.flush();
 			writer.close();

@@ -1,0 +1,32 @@
+package de.tesis.dynaware.javafx.fancychart
+
+import javafx.scene.layout.StackPane
+import javafx.scene.layout.VBox
+import javafx.scene.layout.HBox
+import javafx.scene.control.Button
+import javafx.scene.control.ChoiceBox
+import de.tesis.dynaware.javafx.fancychart.ImportExportPanelController
+import de.tesis.dynaware.javafx.fancychart.data.DataItemDao.FileFormat
+
+
+component ImportExportPanel controlledby ImportExportPanelController {
+	StackPane id rootPane {
+		HBox id buttonContainer {
+			ChoiceBox<FileFormat> id formatChoiceBox {
+				minWidth : 65
+			},
+			styleClass : "button-container",
+			alignment : "CENTER",
+			children : [
+				Button id importButton {
+					text : "Import",
+					styleClass : "table-button"
+				},
+				Button id exportButton {
+					text : "Export",
+					styleClass : "table-button"
+				}
+			]
+		}
+	}
+}

@@ -44,6 +44,8 @@ import de.tesis.dynaware.javafx.fancychart.events.DataItemSelectionEvent;
  */
 public class FancyChartController {
 
+	private static final int NUMBER_OF_DATA_SETS = 3;
+
 	/**
 	 * use these default colours for the line chart when you're running JavaFX 2
 	 * (Java 7)
@@ -99,12 +101,12 @@ public class FancyChartController {
 	private final List<ColorPicker> colorPickers = new ArrayList<>();
 
 	public void initialize() {
-		initItemList();
+		initAllDataSet();
 		initTables();
 		setupColors();
 		setupColorPickers();
 		createChart();
-		populateChart();
+		loadDefaultDataSets();
 		setDataPointPopup();
 		initTabPane();
 
@@ -127,15 +129,22 @@ public class FancyChartController {
 
 	}
 
-	private void initItemList() {
+	private void initAllDataSet() {
 
-		ObservableList<DataItem> DATA_SET_1 = FXCollections.observableArrayList(DefaultDataSet1.getDataItems());
-		ObservableList<DataItem> DATA_SET_2 = FXCollections.observableArrayList(DefaultDataSet2.getDataItems());
-		ObservableList<DataItem> DATA_SET_3 = FXCollections.observableArrayList(DefaultDataSet3.getDataItems());
+		for (int i = 0; i < NUMBER_OF_DATA_SETS; i++) {
+			final ObservableList<DataItem> dataItems = FXCollections.observableArrayList();
+			ALL_DATA_SETS.add(dataItems);
+			final int index = i;
+			dataItems.addListener(new ListChangeListener<DataItem>() {
+				@Override
+				public void onChanged(Change<? extends DataItem> change) {
+					if (change.next()) {
+						setDataItems(dataItems, index);
+					}
+				}
+			});
+		}
 
-		ALL_DATA_SETS.add(DATA_SET_1);
-		ALL_DATA_SETS.add(DATA_SET_2);
-		ALL_DATA_SETS.add(DATA_SET_3);
 	}
 
 	private void setupColors() {
@@ -196,14 +205,13 @@ public class FancyChartController {
 
 	}
 
-	private void populateChart() {
-		for (int i = 0; i < ALL_DATA_SETS.size(); i++) {
-			ObservableList<DataItem> items = ALL_DATA_SETS.get(i);
-			setDataItems(items, i);
-		}
+	private void loadDefaultDataSets() {
+		ALL_DATA_SETS.get(0).setAll(DefaultDataSet1.getDataItems());
+		ALL_DATA_SETS.get(1).setAll(DefaultDataSet2.getDataItems());
+		ALL_DATA_SETS.get(2).setAll(DefaultDataSet3.getDataItems());
 	}
 
-	public void setDataItems(List<DataItem> items, int index) {
+	private void setDataItems(List<DataItem> items, int index) {
 		Series<Number, Number> series = chart.getData().get(index);
 
 		clearSeries(series);
@@ -249,7 +257,10 @@ public class FancyChartController {
 
 			@Override
 			public void handle(DataItemImportEvent event) {
-				setDataItems(event.getImportedDataItems(), event.getDataSeriesIndex());
+				int index = event.getDataSeriesIndex();
+				List<DataItem> importedDataItems = event.getImportedDataItems();
+				ALL_DATA_SETS.get(index).setAll(importedDataItems);
+				setDataItems(importedDataItems, index);
 			}
 		});
 

@@ -1,0 +1,24 @@
+package de.tesis.dynaware.javafx.fancychart
+
+import de.tesis.dynaware.javafx.fancychart.TabTableController
+import de.tesis.dynaware.javafx.fancychart.ImportExportPanel
+import de.tesis.dynaware.javafx.fancychart.data.DataItem
+import javafx.scene.layout.StackPane
+import javafx.scene.layout.VBox
+import javafx.scene.control.TableView
+
+component TabTable controlledby TabTableController {
+	StackPane id rootPane {
+		children : [
+			VBox {
+				styleClass : "table-container",
+				children : [
+					TableView<DataItem> id tableView {
+						static vgrow : "ALWAYS"
+					},
+					include ImportExportPanel as importExportPanel
+				]
+			}
+		]
+	}
+}

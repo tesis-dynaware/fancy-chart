@@ -8,12 +8,9 @@
 
 package de.tesis.dynaware.javafx.fancychart
 
-import javafx.scene.layout.VBox
 import javafx.scene.control.TableView
 import de.tesis.dynaware.javafx.fancychart.TabbedTablesController
-import de.tesis.dynaware.javafx.fancychart.data.DataItem
-import javafx.scene.layout.HBox
-import javafx.scene.control.Button
+import de.tesis.dynaware.javafx.fancychart.TabTable
 import javafx.scene.control.TabPane
 import javafx.scene.control.Tab
 import javafx.scene.layout.StackPane
@@ -23,89 +20,20 @@ component TabbedTables controlledby TabbedTablesController {
 		children : [
 			TabPane id tableTabPane {
 				tabs : [
-					Tab id tab0 {
+					Tab {
 						text : "Data Set 1",
 						closable : false,
-						content : VBox {
-							styleClass : "table-container",
-							children : [
-								TableView<DataItem> id tableView0 {
-									static vgrow : "ALWAYS"
-								},
-								HBox id buttonContainer0 {
-									styleClass : "button-container",
-									alignment : "CENTER",
-									children : [
-										Button id importButton0 {
-											text : "Import",
-											styleClass : "table-button",
-											onAction : controllermethod import0
-										},
-										Button id exportButton0 {
-											text : "Export",
-											styleClass : "table-button",
-											onAction : controllermethod export0
-										}
-									]
-								}
-							]
-						}
+						content : include TabTable as table0
 					},
-					Tab id tab1 {
+					Tab {
 						text : "Data Set 2",
 						closable : false,
-						content : VBox {
-							styleClass : "table-container",
-							children : [
-								TableView<DataItem> id tableView1 {
-									static vgrow : "ALWAYS"
-								},
-								HBox id buttonContainer1 {
-									styleClass : "button-container",
-									alignment : "CENTER",
-									children : [
-										Button id importButton1 {
-											text : "Import",
-											styleClass : "table-button",
-											onAction : controllermethod import1
-										},
-										Button id exportButton1 {
-											text : "Export",
-											styleClass : "table-button",
-											onAction : controllermethod export1
-										}
-									]
-								}
-							]
-						}
+						content : include TabTable as table1
 					},
-					Tab id tab2 {
+					Tab {
 						text : "Data Set 3",
 						closable : false,
-						content : VBox {
-							styleClass : "table-container",
-							children : [
-								TableView<DataItem> id tableView2 {
-									static vgrow : "ALWAYS"
-								},
-								HBox id buttonContainer2 {
-									styleClass : "button-container",
-									alignment : "CENTER",
-									children : [
-										Button id importButton2 {
-											text : "Import",
-											styleClass : "table-button",
-											onAction : controllermethod import2
-										},
-										Button id exportButton2 {
-											text : "Export",
-											styleClass : "table-button",
-											onAction : controllermethod export2
-										}
-									]
-								}
-							]
-						}
+						content : include TabTable as table2
 					}
 				]
 			}
