@@ -51,16 +51,14 @@ public class FancyChartController {
 	private static final int NUMBER_OF_DATA_SETS = 3;
 
 	/**
-	 * use these default colours for the line chart when you're running JavaFX 2
-	 * (Java 7)
+	 * use these default colours for the line chart when you're running JavaFX 2 (Java 7)
 	 */
 	private static final String CHART_SERIES_DEFAULT_COLOR_0_FX2 = "#f9d900";
 	private static final String CHART_SERIES_DEFAULT_COLOR_1_FX2 = "#a9e200";
 	private static final String CHART_SERIES_DEFAULT_COLOR_2_FX2 = "#22bad9";
 
 	/**
-	 * use these default colours for the line chart when you're running JavaFX 8
-	 * (Java 8)
+	 * use these default colours for the line chart when you're running JavaFX 8 (Java 8)
 	 */
 	private static final String CHART_SERIES_DEFAULT_COLOR_0_FX8 = "#f3622d";
 	private static final String CHART_SERIES_DEFAULT_COLOR_1_FX8 = "#fba71b";
@@ -307,7 +305,7 @@ public class FancyChartController {
 	}
 
 	/*
-	 * TODO: this method can be simplifies using Java 8 streams and lambdas
+	 * TODO: this method can be simplified using Java 8 streams and lambdas
 	 */
 	private double computeUpperBoundX() {
 		double maxX = Double.MIN_VALUE;
@@ -326,7 +324,7 @@ public class FancyChartController {
 	}
 
 	/*
-	 * TODO: this method can be simplifies using Java 8 streams and lambdas
+	 * TODO: this method can be simplified using Java 8 streams and lambdas
 	 */
 	private double computeLowerBoundX() {
 		double minX = Double.MAX_VALUE;
@@ -344,7 +342,7 @@ public class FancyChartController {
 	}
 
 	/*
-	 * TODO: this method can be simplifies using Java 8 streams and lambdas
+	 * TODO: this method can be simplified using Java 8 streams and lambdas
 	 */
 	private double computeUpperBoundY() {
 		double maxY = Double.MIN_VALUE;
@@ -362,7 +360,7 @@ public class FancyChartController {
 	}
 
 	/*
-	 * TODO: this method can be simplifies using Java 8 streams and lambdas
+	 * TODO: this method can be simplified using Java 8 streams and lambdas
 	 */
 	private double computeLowerBoundY() {
 		double minY = Double.MAX_VALUE;
