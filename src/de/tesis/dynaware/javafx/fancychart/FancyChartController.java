@@ -8,6 +8,7 @@
 package de.tesis.dynaware.javafx.fancychart;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -38,11 +39,14 @@ import de.tesis.dynaware.javafx.fancychart.data.DefaultDataSet2;
 import de.tesis.dynaware.javafx.fancychart.data.DefaultDataSet3;
 import de.tesis.dynaware.javafx.fancychart.events.DataItemImportEvent;
 import de.tesis.dynaware.javafx.fancychart.events.DataItemSelectionEvent;
+import de.tesis.dynaware.javafx.fancychart.zoom.Zoom;
 
 /**
  * 
  */
 public class FancyChartController {
+
+	private static final int CHART_AXIS_TICK_UNIT = 5;
 
 	private static final int NUMBER_OF_DATA_SETS = 3;
 
@@ -95,23 +99,45 @@ public class FancyChartController {
 	@FXML
 	private TabbedTablesController tabPaneContainerController;
 
-	private LineChart<Number, Number> chart;
-
 	private final ObservableList<Color> seriesColors = FXCollections.observableArrayList();
 	private final List<ColorPicker> colorPickers = new ArrayList<>();
+
+	private LineChart<Number, Number> chart;
+	private StackPane chartPane;
+	private NumberAxis xAxis;
+	private NumberAxis yAxis;
+
+	private double defaultLowerBoundX;
+	private double defaultUpperBoundX;
+	private double defaultLowerBoundY;
+	private double defaultUpperBoundY;
 
 	public void initialize() {
 		initAllDataSet();
 		initTables();
 		setupColors();
 		setupColorPickers();
-		createChart();
 		loadDefaultDataSets();
+		createChart();
 		setDataPointPopup();
 		initTabPane();
-
+		addZoom();
 	}
 
+	/**
+	 * Adds zoom functionality for the line series in the chart.
+	 */
+	private void addZoom() {
+		Zoom zoom = new Zoom(chart, chartPane);
+		zoom.setDefaultLowerBoundX(defaultLowerBoundX);
+		zoom.setDefaultUpperBoundX(defaultUpperBoundX);
+		zoom.setDefaultLowerBoundY(defaultLowerBoundY);
+		zoom.setDefaultUpperBoundY(defaultUpperBoundY);
+	}
+
+	/**
+	 * Initialises the tables in the tab pane.
+	 */
 	private void initTables() {
 		for (int i = 0; i < ALL_DATA_SETS.size(); i++) {
 			tabPaneContainerController.initTable(i, ALL_DATA_SETS.get(i));
@@ -129,11 +155,23 @@ public class FancyChartController {
 
 	}
 
+	/**
+	 * Initialises the data sets with empty lists.
+	 */
 	private void initAllDataSet() {
-
 		for (int i = 0; i < NUMBER_OF_DATA_SETS; i++) {
 			final ObservableList<DataItem> dataItems = FXCollections.observableArrayList();
 			ALL_DATA_SETS.add(dataItems);
+		}
+	}
+
+	/**
+	 * Adds a listener that updates the chart items when the a data set changes
+	 */
+	private void addDataItemChangeListener() {
+
+		for (int i = 0; i < ALL_DATA_SETS.size(); i++) {
+			ObservableList<DataItem> dataItems = ALL_DATA_SETS.get(i);
 			final int index = i;
 			dataItems.addListener(new ListChangeListener<DataItem>() {
 				@Override
@@ -143,6 +181,8 @@ public class FancyChartController {
 					}
 				}
 			});
+			// set initial values
+			setDataItems(dataItems, index);
 		}
 
 	}
@@ -216,8 +256,7 @@ public class FancyChartController {
 
 		clearSeries(series);
 
-		for (int j = 0; j < items.size(); j++) {
-			final DataItem dataItem = items.get(j);
+		for (DataItem dataItem : items) {
 			final Data<Number, Number> data = new XYChart.Data<Number, Number>();
 			data.XValueProperty().bind(dataItem.xProperty());
 			data.YValueProperty().bind(dataItem.yProperty());
@@ -236,8 +275,20 @@ public class FancyChartController {
 
 	private void createChart() {
 
-		final NumberAxis xAxis = new NumberAxis();
-		final NumberAxis yAxis = new NumberAxis();
+		// compute the bounds for the axes
+		double lowerBoundX = computeLowerBoundX();
+		double upperBoundX = computeUpperBoundX();
+		double lowerBoundY = computeLowerBoundY();
+		double upperBoundY = computeUpperBoundY();
+
+		// these bounds are needed for the zoom object, for instance
+		defaultLowerBoundX = lowerBoundX;
+		defaultUpperBoundX = upperBoundX;
+		defaultLowerBoundY = lowerBoundY;
+		defaultUpperBoundY = upperBoundY;
+
+		xAxis = new NumberAxis(lowerBoundX, upperBoundX, CHART_AXIS_TICK_UNIT);
+		yAxis = new NumberAxis(lowerBoundY, upperBoundY, CHART_AXIS_TICK_UNIT);
 		chart = new LineChart<>(xAxis, yAxis);
 		xAxis.setLabel("X");
 		yAxis.setLabel("Y");
@@ -245,11 +296,87 @@ public class FancyChartController {
 		final List<XYChart.Series<Number, Number>> seriesList = createChartSeries();
 		chart.getData().addAll(seriesList);
 
-		VBox.setVgrow(chart, Priority.ALWAYS);
+		chartPane = new StackPane(chart);
 
-		chartBox.getChildren().add(0, chart);
+		VBox.setVgrow(chartPane, Priority.ALWAYS);
+
+		chartBox.getChildren().add(0, chartPane);
+		addDataItemChangeListener();
 		addSelectionListener();
 		addDataImportListener();
+	}
+
+	/*
+	 * TODO: this method can be simplifies using Java 8 streams and lambdas
+	 */
+	private double computeUpperBoundX() {
+		double maxX = Double.MIN_VALUE;
+		// run through all data items and find the maximum x value
+		for (ObservableList<DataItem> dataItems : ALL_DATA_SETS) {
+			ObservableList<Double> xValues = FXCollections.observableArrayList();
+			for (DataItem dataItem : dataItems) {
+				xValues.add(dataItem.getX().doubleValue());
+			}
+			maxX = Math.max(maxX, Collections.max(xValues));
+
+		}
+		// add some padding so the first and last data points are clearly
+		// visible in the chart
+		return Math.ceil(maxX + 1);
+	}
+
+	/*
+	 * TODO: this method can be simplifies using Java 8 streams and lambdas
+	 */
+	private double computeLowerBoundX() {
+		double minX = Double.MAX_VALUE;
+		// run through all data items and find the minimum x value
+		for (ObservableList<DataItem> dataItems : ALL_DATA_SETS) {
+			ObservableList<Double> xValues = FXCollections.observableArrayList();
+			for (DataItem dataItem : dataItems) {
+				xValues.add(dataItem.getX().doubleValue());
+			}
+			minX = Math.min(minX, Collections.min(xValues));
+		}
+		// add some padding so the first and last data points are clearly
+		// visible in the chart
+		return Math.floor(minX - 1);
+	}
+
+	/*
+	 * TODO: this method can be simplifies using Java 8 streams and lambdas
+	 */
+	private double computeUpperBoundY() {
+		double maxY = Double.MIN_VALUE;
+		// run through all data items and find the maximum y value
+		for (ObservableList<DataItem> dataItems : ALL_DATA_SETS) {
+			ObservableList<Double> yValues = FXCollections.observableArrayList();
+			for (DataItem dataItem : dataItems) {
+				yValues.add(dataItem.getY().doubleValue());
+			}
+			maxY = Math.max(maxY, Collections.max(yValues));
+		}
+		// add some padding so the first and last data points are clearly
+		// visible in the chart
+		return Math.ceil(maxY + 1);
+	}
+
+	/*
+	 * TODO: this method can be simplifies using Java 8 streams and lambdas
+	 */
+	private double computeLowerBoundY() {
+		double minY = Double.MAX_VALUE;
+		// run through all data items and find the minimum y value
+		for (ObservableList<DataItem> dataItems : ALL_DATA_SETS) {
+			ObservableList<Double> yValues = FXCollections.observableArrayList();
+			for (DataItem dataItem : dataItems) {
+				yValues.add(dataItem.getY().doubleValue());
+			}
+			minY = Math.min(minY, Collections.min(yValues));
+		}
+		// add some padding so the first and last data points are clearly
+		// visible in the chart
+		return Math.floor(minY - 1);
 	}
 
 	private void addDataImportListener() {
@@ -369,19 +496,14 @@ public class FancyChartController {
 	}
 
 	private List<XYChart.Series<Number, Number>> createChartSeries() {
-		final XYChart.Series<Number, Number> series1 = new XYChart.Series<>();
-		series1.setName("Data Set 1");
-
-		final XYChart.Series<Number, Number> series2 = new XYChart.Series<>();
-		series2.setName("Data Set 2");
-
-		final XYChart.Series<Number, Number> series3 = new XYChart.Series<>();
-		series3.setName("Data Set 3");
 
 		final List<XYChart.Series<Number, Number>> seriesList = new ArrayList<>();
-		seriesList.add(series1);
-		seriesList.add(series2);
-		seriesList.add(series3);
+		for (int i = 0; i < ALL_DATA_SETS.size(); i++) {
+			final XYChart.Series<Number, Number> series = new XYChart.Series<>();
+			series.setName("Data Set " + i);
+			// series.setData(ALL_DATA_SETS.get(i));
+			seriesList.add(series);
+		}
 
 		return seriesList;
 

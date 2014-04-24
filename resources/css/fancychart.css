@@ -37,6 +37,12 @@
 	-fx-padding: 5;
 }
 
+.chart-selection-rectangle {
+	-fx-stroke: rgba(135, 206, 250, 0.8);
+	-fx-stroke-type: inside;
+	-fx-fill: rgba(135, 206, 250, 0.2);
+}
+
 #colorPickerBox {
 	-fx-alignment: center;
 	-fx-spacing: 50;
@@ -74,4 +80,11 @@
 .table-container {
 	-fx-background-color: transparent;
 	-fx-spacing: 5;
+}
+
+#zoomInfoLabel {
+	-fx-background-color: rgba(135, 206, 250, 0.8);
+	-fx-font-size: 14;
+	-fx-padding: 3;
+	-fx-background-radius: 2;
 }
