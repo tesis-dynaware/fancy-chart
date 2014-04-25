@@ -8,7 +8,6 @@
 package de.tesis.dynaware.javafx.fancychart;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -105,11 +104,6 @@ public class FancyChartController {
 	private NumberAxis xAxis;
 	private NumberAxis yAxis;
 
-	private double defaultLowerBoundX;
-	private double defaultUpperBoundX;
-	private double defaultLowerBoundY;
-	private double defaultUpperBoundY;
-
 	public void initialize() {
 		initAllDataSet();
 		initTables();
@@ -127,10 +121,6 @@ public class FancyChartController {
 	 */
 	private void addZoom() {
 		Zoom zoom = new Zoom(chart, chartPane);
-		zoom.setDefaultLowerBoundX(defaultLowerBoundX);
-		zoom.setDefaultUpperBoundX(defaultUpperBoundX);
-		zoom.setDefaultLowerBoundY(defaultLowerBoundY);
-		zoom.setDefaultUpperBoundY(defaultUpperBoundY);
 	}
 
 	/**
@@ -256,8 +246,8 @@ public class FancyChartController {
 
 		for (DataItem dataItem : items) {
 			final Data<Number, Number> data = new XYChart.Data<Number, Number>();
-			data.XValueProperty().bind(dataItem.xProperty());
 			data.YValueProperty().bind(dataItem.yProperty());
+			data.XValueProperty().bind(dataItem.xProperty());
 			series.getData().add(data);
 		}
 
@@ -273,20 +263,8 @@ public class FancyChartController {
 
 	private void createChart() {
 
-		// compute the bounds for the axes
-		double lowerBoundX = computeLowerBoundX();
-		double upperBoundX = computeUpperBoundX();
-		double lowerBoundY = computeLowerBoundY();
-		double upperBoundY = computeUpperBoundY();
-
-		// these bounds are needed for the zoom object, for instance
-		defaultLowerBoundX = lowerBoundX;
-		defaultUpperBoundX = upperBoundX;
-		defaultLowerBoundY = lowerBoundY;
-		defaultUpperBoundY = upperBoundY;
-
-		xAxis = new NumberAxis(lowerBoundX, upperBoundX, CHART_AXIS_TICK_UNIT);
-		yAxis = new NumberAxis(lowerBoundY, upperBoundY, CHART_AXIS_TICK_UNIT);
+		xAxis = new NumberAxis();// lowerBoundX, upperBoundX, CHART_AXIS_TICK_UNIT);
+		yAxis = new NumberAxis();// lowerBoundY, upperBoundY, CHART_AXIS_TICK_UNIT);
 		chart = new LineChart<>(xAxis, yAxis);
 		xAxis.setLabel("X");
 		yAxis.setLabel("Y");
@@ -302,79 +280,6 @@ public class FancyChartController {
 		addDataItemChangeListener();
 		addSelectionListener();
 		addDataImportListener();
-	}
-
-	/*
-	 * TODO: this method can be simplified using Java 8 streams and lambdas
-	 */
-	private double computeUpperBoundX() {
-		double maxX = Double.MIN_VALUE;
-		// run through all data items and find the maximum x value
-		for (ObservableList<DataItem> dataItems : ALL_DATA_SETS) {
-			ObservableList<Double> xValues = FXCollections.observableArrayList();
-			for (DataItem dataItem : dataItems) {
-				xValues.add(dataItem.getX().doubleValue());
-			}
-			maxX = Math.max(maxX, Collections.max(xValues));
-
-		}
-		// add some padding so the first and last data points are clearly
-		// visible in the chart
-		return Math.ceil(maxX + 1);
-	}
-
-	/*
-	 * TODO: this method can be simplified using Java 8 streams and lambdas
-	 */
-	private double computeLowerBoundX() {
-		double minX = Double.MAX_VALUE;
-		// run through all data items and find the minimum x value
-		for (ObservableList<DataItem> dataItems : ALL_DATA_SETS) {
-			ObservableList<Double> xValues = FXCollections.observableArrayList();
-			for (DataItem dataItem : dataItems) {
-				xValues.add(dataItem.getX().doubleValue());
-			}
-			minX = Math.min(minX, Collections.min(xValues));
-		}
-		// add some padding so the first and last data points are clearly
-		// visible in the chart
-		return Math.floor(minX - 1);
-	}
-
-	/*
-	 * TODO: this method can be simplified using Java 8 streams and lambdas
-	 */
-	private double computeUpperBoundY() {
-		double maxY = Double.MIN_VALUE;
-		// run through all data items and find the maximum y value
-		for (ObservableList<DataItem> dataItems : ALL_DATA_SETS) {
-			ObservableList<Double> yValues = FXCollections.observableArrayList();
-			for (DataItem dataItem : dataItems) {
-				yValues.add(dataItem.getY().doubleValue());
-			}
-			maxY = Math.max(maxY, Collections.max(yValues));
-		}
-		// add some padding so the first and last data points are clearly
-		// visible in the chart
-		return Math.ceil(maxY + 1);
-	}
-
-	/*
-	 * TODO: this method can be simplified using Java 8 streams and lambdas
-	 */
-	private double computeLowerBoundY() {
-		double minY = Double.MAX_VALUE;
-		// run through all data items and find the minimum y value
-		for (ObservableList<DataItem> dataItems : ALL_DATA_SETS) {
-			ObservableList<Double> yValues = FXCollections.observableArrayList();
-			for (DataItem dataItem : dataItems) {
-				yValues.add(dataItem.getY().doubleValue());
-			}
-			minY = Math.min(minY, Collections.min(yValues));
-		}
-		// add some padding so the first and last data points are clearly
-		// visible in the chart
-		return Math.floor(minY - 1);
 	}
 
 	private void addDataImportListener() {
@@ -499,7 +404,6 @@ public class FancyChartController {
 		for (int i = 0; i < ALL_DATA_SETS.size(); i++) {
 			final XYChart.Series<Number, Number> series = new XYChart.Series<>();
 			series.setName("Data Set " + i);
-			// series.setData(ALL_DATA_SETS.get(i));
 			seriesList.add(series);
 		}
 
